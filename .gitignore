@@ -1,0 +1,5 @@
+# Data Puddles
+/data/*
+
+# macOS
+.DS_Store

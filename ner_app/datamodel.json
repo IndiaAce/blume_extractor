@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "Country",
+      "entity_types": ["GPE", "LOC"],
+      "normalizer": "country",
+      "min_confidence": 0.55
+    },
+    {
+      "name": "Organization",
+      "entity_types": ["ORG"],
+      "normalizer": "org",
+      "min_confidence": 0.6
+    },
+    {
+      "name": "ThreatActor",
+      "entity_types": ["ORG", "PERSON"],
+      "normalizer": "threatactor",
+      "min_confidence": 0.65
+    }
+  ]
+}
