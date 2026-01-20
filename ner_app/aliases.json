@@ -1,0 +1,10 @@
+{
+  "country": {
+    "america": ["United States of America", "North America"],
+    "u.s.": ["United States of America"],
+    "us": ["United States of America"],
+    "usa": ["United States of America"],
+    "united states": ["United States of America"],
+    "united states of america": ["United States of America"]
+  }
+}
