@@ -17,6 +17,12 @@
       "entity_types": ["ORG", "PERSON"],
       "normalizer": "threatactor",
       "min_confidence": 0.65
+    },
+    {
+      "name": "Malware",
+      "entity_types": ["PRODUCT", "WORK_OF_ART"],
+      "normalizer": "malware",
+      "min_confidence": 0.7
     }
   ]
 }

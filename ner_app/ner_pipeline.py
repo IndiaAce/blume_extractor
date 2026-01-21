@@ -1,29 +1,28 @@
 import json
-
 import spacy
 
 from ner_app.config import (
-    DEFAULT_ALIASES_PATH,
-    DEFAULT_DATAMODEL_PATH,
-    DEFAULT_MODEL,
+    ALIASES_PATH,
+    DATAMODEL_PATH,
+    MODEL,
+    BASE_CONFIDENCE,
+    CONFIDENCE_WEIGHTS,
+    AMBIGUITY_PENALTY,
 )
 from ner_app.normalizers import normalize_by_type
 
 
-DEFAULT_BASE_CONFIDENCE = 0.55
-
-
-def load_datamodel(path=DEFAULT_DATAMODEL_PATH):
+def load_datamodel(path=DATAMODEL_PATH):
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)["fields"]
 
 
-def load_aliases(path=DEFAULT_ALIASES_PATH):
+def load_aliases(path=ALIASES_PATH):
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
-def load_spacy_model(model_name=DEFAULT_MODEL):
+def load_spacy_model(model_name=MODEL):
     return spacy.load(model_name)
 
 
@@ -36,13 +35,21 @@ def _build_label_map(fields):
 
 
 def _base_confidence(ent):
-    confidence = DEFAULT_BASE_CONFIDENCE
+    confidence = BASE_CONFIDENCE
     if hasattr(ent._, "confidence"):
         try:
             confidence = float(ent._.confidence)
         except (TypeError, ValueError):
             pass
     return confidence
+
+
+def _calculate_confidence(base_conf, alias_confidence, ambiguous, normalizer_name):
+    weights = CONFIDENCE_WEIGHTS.get(normalizer_name, CONFIDENCE_WEIGHTS["default"])
+    combined = (base_conf * weights["base"]) + (alias_confidence * weights["alias"])
+    if ambiguous:
+        combined = max(0.0, combined - AMBIGUITY_PENALTY)
+    return combined
 
 
 def extract_observations(text, source, fields, aliases, nlp):
@@ -53,12 +60,16 @@ def extract_observations(text, source, fields, aliases, nlp):
     for ent in doc.ents:
         for field in label_map.get(ent.label_, []):
             base_conf = _base_confidence(ent)
-            candidates = normalize_by_type(field["normalizer"], ent.text, aliases)
+            normalizer_name = field["normalizer"]
+            candidates = normalize_by_type(normalizer_name, ent.text, aliases)
 
             for candidate in candidates:
-                combined = (base_conf * 0.6) + (candidate["alias_confidence"] * 0.4)
-                if candidate.get("ambiguous"):
-                    combined = max(0.0, combined - 0.1)
+                combined = _calculate_confidence(
+                    base_conf,
+                    candidate["alias_confidence"],
+                    candidate.get("ambiguous"),
+                    normalizer_name,
+                )
 
                 if combined < field["min_confidence"]:
                     continue

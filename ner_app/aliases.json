@@ -6,5 +6,12 @@
     "usa": ["United States of America"],
     "united states": ["United States of America"],
     "united states of america": ["United States of America"]
+  },
+  "threatactor": {
+    "apt24": ["APT24"],
+    "apt 24": ["APT24"]
+  },
+  "malware": {
+    "poison ivy": ["Poison Ivy"]
   }
 }

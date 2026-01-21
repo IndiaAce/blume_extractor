@@ -21,7 +21,7 @@ def _build_candidates(raw_text, canonical_list, base_confidence):
     ]
 
 
-def normalize_country(raw_text, alias_map):
+def normalize_with_aliases(raw_text, alias_map):
     key = _normalize_key(raw_text)
     if key in alias_map:
         canonical_list = alias_map[key]
@@ -48,7 +48,8 @@ def normalize_generic(raw_text):
 
 
 def normalize_by_type(normalizer_name, raw_text, aliases):
-    if normalizer_name == "country":
-        return normalize_country(raw_text, aliases.get("country", {}))
+    alias_map = aliases.get(normalizer_name)
+    if alias_map:
+        return normalize_with_aliases(raw_text, alias_map)
 
     return normalize_generic(raw_text)

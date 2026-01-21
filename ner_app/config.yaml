@@ -1,0 +1,32 @@
+# ner_app/config.yaml
+
+# SpaCy model to use for NER
+model: "en_core_web_sm"
+
+# Path to the SQLite database
+db_path: "ner_app/ner.db"
+
+# Path to the datamodel JSON file
+datamodel_path: "ner_app/datamodel.json"
+
+# Path to the aliases JSON file
+aliases_path: "ner_app/aliases.json"
+
+# Base confidence score for entities
+base_confidence: 0.55
+
+# Confidence score weights
+confidence_weights:
+  default:
+    base: 0.6
+    alias: 0.4
+  country:
+    base: 0.5
+    alias: 0.5
+
+# Ambiguity penalty
+ambiguity_penalty: 0.1
+
+# Logging configuration
+logging:
+  level: "INFO"
